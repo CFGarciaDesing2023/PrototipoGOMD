@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirigir según el rol
             if (role === 'operador') {
-                window.location.href = '../operador.html';
+                window.location.href = './operador.html';
             } else if (role === 'coordinador') {
-                window.location.href = '../coordinador.html';
+                window.location.href = './coordinador.html';
             }
         } else {
             alert('Usuario, contraseña o rol incorrectos');
