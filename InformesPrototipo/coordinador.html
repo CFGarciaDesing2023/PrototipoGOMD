@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinador - Sistema de Informes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Revisión de Informes Quincenales</h1>
+        <div class="user-info">
+            <span id="currentUser"></span>
+            <button id="logoutBtn">Cerrar Sesión</button>
+        </div>
+    </header>
+    
+    <main>
+        <div class="dashboard">
+            <div class="stats-card">
+                <h3><i class="fas fa-file-alt"></i> Total Informes</h3>
+                <p id="totalInformes">0</p>
+            </div>
+            <div class="stats-card">
+                <h3><i class="fas fa-check-circle"></i> Revisados</h3>
+                <p id="informesRevisados">0</p>
+            </div>
+            <div class="stats-card">
+                <h3><i class="fas fa-clock"></i> Pendientes</h3>
+                <p id="informesPendientes">0</p>
+            </div>
+            <div class="stats-card danger">
+                <h3><i class="fas fa-trash-alt"></i> Eliminar</h3>
+                <button id="deleteAllBtn" class="delete-all-btn">Eliminar Todos</button>
+            </div>
+        </div>
+
+        <div class="filters-container">
+            <div class="filters">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Buscar por operador, sitio...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterSitio">Sitio:</label>
+                    <select id="filterSitio">
+                        <option value="">Todos</option>
+                        <option value="EPMSC Apartador">EPMSC Apartador</option>
+                        <option value="CPAMS Dorada">CPAMS Dorada</option>
+                        <option value="CPMS Ipiales">CPMS Ipiales</option>
+                        <option value="E.P Heliconias">E.P Heliconias</option>
+                        <option value="EPMSC Leticia">EPMSC Leticia</option>
+                        <option value="GAORI">GAORI</option>
+                        <option value="GACAS">GACAS</option>
+                        <option value="GAMAA">GAMAA</option>
+                        <option value="GACAR">GACAR</option>
+                        <option value="CACOM2">CACOM2</option>
+                        <option value="CACOM3">CACOM3</option>
+                        <option value="CACOM4">CACOM4</option>
+                        <option value="CACOM5">CACOM5</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterTipo">Tipo:</label>
+                    <select id="filterTipo">
+                        <option value="">Todos</option>
+                        <option value="PTAR">PTAR</option>
+                        <option value="PTAP">PTAP</option>
+                        <option value="CEA">CEA</option>
+                        <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterFecha">Fecha:</label>
+                    <input type="date" id="filterFecha">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterEstado">Estado:</label>
+                    <select id="filterEstado">
+                        <option value="">Todos</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="revisado">Revisados</option>
+                    </select>
+                </div>
+                
+                <button id="applyFilters" class="filter-btn">Filtrar</button>
+                <button id="resetFilters" class="filter-btn secondary">Limpiar</button>
+            </div>
+        </div>
+
+        <div class="informes-container">
+            <div id="informesList" class="informes-grid">
+                <!-- Los informes se cargarán aquí dinámicamente -->
+            </div>
+            
+            <div class="pagination">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                <span id="pageInfo">Página 1 de 1</span>
+                <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Modal para detalles del informe -->
+        <div id="informeModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modalTitle">Detalles del Informe</h2>
+                
+                <div class="modal-body">
+                    <div class="informe-header">
+                        <div>
+                            <p><strong>Operador:</strong> <span id="modalOperador"></span></p>
+                            <p><strong>Sitio:</strong> <span id="modalSitio"></span></p>
+                            <p><strong>Tipo:</strong> <span id="modalTipo"></span></p>
+                        </div>
+                        <div>
+                            <p><strong>Fecha Informe:</strong> <span id="modalFecha"></span></p>
+                            <p><strong>Enviado:</strong> <span id="modalEnviado"></span></p>
+                            <p><strong>Estado:</strong> <span id="modalEstado"></span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="fotos-tab">Fotos (<span id="fotosCount">0</span>)</button>
+                        <button class="tab-btn" data-tab="videos-tab">Videos (<span id="videosCount">0</span>)</button>
+                        <button class="tab-btn" data-tab="documentos-tab">Documentos (<span id="docsCount">0</span>)</button>
+                    </div>
+                    
+                    <div id="fotos-tab" class="tab-content active">
+                        <div id="fotosGallery" class="gallery-container"></div>
+                    </div>
+                    
+                    <div id="videos-tab" class="tab-content">
+                        <div id="videosGallery" class="gallery-container"></div>
+                    </div>
+                    
+                    <div id="documentos-tab" class="tab-content">
+                        <div id="documentosList" class="documents-container"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button id="deleteInforme" class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar Informe</button>
+                    <button id="markReviewed" class="review-btn"><i class="fas fa-check"></i> Marcar como Revisado</button>
+                    <button id="downloadInforme" class="download-btn"><i class="fas fa-download"></i> Descargar Todo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmación -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content confirm-modal">
+                <h3 id="confirmModalTitle">¿Estás seguro?</h3>
+                <p id="confirmModalMessage">Esta acción no se puede deshacer.</p>
+                <div class="confirm-buttons">
+                    <button id="confirmCancel" class="cancel-btn">Cancelar</button>
+                    <button id="confirmAction" class="confirm-btn">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/coordinador.js"></script>
+</body>
+</html>

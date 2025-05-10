@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operador - Sistema de Informes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Envío de Informes Quincenales</h1>
+        <div class="user-info">
+            <span id="currentUser"></span>
+            <button id="logoutBtn">Cerrar Sesión</button>
+        </div>
+    </header>
+    
+    <main>
+        <div class="progress-steps">
+            <div class="step active">
+                <div class="step-number">1</div>
+                <div class="step-title">Datos del Sitio</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-title">Fotos</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-title">Videos</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-title">Documentos</div>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-title">Revisión</div>
+            </div>
+        </div>
+
+        <form id="informeForm">
+            <!-- Paso 1: Datos del Sitio -->
+            <div id="step1" class="form-section active-step">
+                <h2><i class="fas fa-map-marker-alt"></i> Datos del Sitio</h2>
+                <div class="form-group">
+                    <label for="sitio"><i class="fas fa-building"></i> Sitio:</label>
+                    <select id="sitio" required>
+                        <option value="">Seleccione un sitio</option>
+                        <option value="EPMSC Apartador">EPMSC Apartador</option>
+                        <option value="CPAMS Dorada">CPAMS Dorada</option>
+                        <option value="CPMS Ipiales">CPMS Ipiales</option>
+                        <option value="E.P Heliconias">E.P Heliconias</option>
+                        <option value="EPMSC Leticia">EPMSC Leticia</option>
+                        <option value="GAORI">GAORI</option>
+                        <option value="GACAS">GACAS</option>
+                        <option value="GAMAA">GAMAA</option>
+                        <option value="GACAR">GACAR</option>
+                        <option value="CACOM2">CACOM2</option>
+                        <option value="CACOM3">CACOM3</option>
+                        <option value="CACOM4">CACOM4</option>
+                        <option value="CACOM5">CACOM5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipoSitio"><i class="fas fa-tag"></i> Tipo de Sitio:</label>
+                    <select id="tipoSitio" required>
+                        <option value="">Seleccione un tipo</option>
+                        <option value="PTAR">PTAR</option>
+                        <option value="PTAP">PTAP</option>
+                        <option value="CEA">CEA</option>
+                        <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha"><i class="far fa-calendar-alt"></i> Fecha del Informe:</label>
+                    <input type="date" id="fecha" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="next-btn" onclick="nextStep(1)">Siguiente <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Paso 2: Fotos -->
+            <div id="step2" class="form-section">
+                <h2><i class="fas fa-camera"></i> Fotos</h2>
+                <div class="file-upload-container">
+                    <div class="file-upload">
+                        <input type="file" id="fotos" accept="image/*" multiple>
+                        <label for="fotos" class="upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar Fotos</span>
+                        </label>
+                        <p class="file-upload-info">Formatos aceptados: JPG, PNG. Máx. 5MB por foto.</p>
+                    </div>
+                    <div id="fotosPreview" class="preview-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="back-btn" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="next-btn" onclick="nextStep(2)">Siguiente <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Paso 3: Videos -->
+            <div id="step3" class="form-section">
+                <h2><i class="fas fa-video"></i> Videos</h2>
+                <div class="file-upload-container">
+                    <div class="file-upload">
+                        <input type="file" id="videos" accept="video/*" multiple>
+                        <label for="videos" class="upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar Videos</span>
+                        </label>
+                        <p class="file-upload-info">Formatos aceptados: MP4, MOV. Máx. 20MB por video.</p>
+                    </div>
+                    <div id="videosPreview" class="preview-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="back-btn" onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="next-btn" onclick="nextStep(3)">Siguiente <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Paso 4: Documentos -->
+            <div id="step4" class="form-section">
+                <h2><i class="fas fa-file-alt"></i> Documentos</h2>
+                <div class="file-upload-container">
+                    <div class="file-upload">
+                        <input type="file" id="documentos" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                        <label for="documentos" class="upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar Documentos</span>
+                        </label>
+                        <p class="file-upload-info">Formatos aceptados: PDF, DOC, XLS. Máx. 10MB por archivo.</p>
+                    </div>
+                    <div id="documentosPreview" class="preview-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="back-btn" onclick="prevStep(4)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="next-btn" onclick="nextStep(4)">Siguiente <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Paso 5: Revisión -->
+            <div id="step5" class="form-section">
+                <h2><i class="fas fa-check-circle"></i> Revisión Final</h2>
+                <div class="review-summary">
+                    <div class="review-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Datos del Sitio</h3>
+                        <div class="review-data">
+                            <p><strong>Sitio:</strong> <span id="reviewSitio"></span></p>
+                            <p><strong>Tipo:</strong> <span id="reviewTipo"></span></p>
+                            <p><strong>Fecha:</strong> <span id="reviewFecha"></span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3><i class="fas fa-camera"></i> Fotos</h3>
+                        <div id="reviewFotos" class="review-files">
+                            <p>No hay fotos seleccionadas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3><i class="fas fa-video"></i> Videos</h3>
+                        <div id="reviewVideos" class="review-files">
+                            <p>No hay videos seleccionados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3><i class="fas fa-file-alt"></i> Documentos</h3>
+                        <div id="reviewDocumentos" class="review-files">
+                            <p>No hay documentos seleccionados</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="back-btn" onclick="prevStep(5)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar Informe</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Modal de confirmación -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content confirm-modal">
+                <h3><i class="fas fa-check-circle"></i> Informe Enviado</h3>
+                <p>Tu informe ha sido enviado exitosamente a los coordinadores.</p>
+                <div class="confirm-buttons">
+                    <button id="confirmClose" class="confirm-btn">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/operador.js"></script>
+</body>
+</html>
