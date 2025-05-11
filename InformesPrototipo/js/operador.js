@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar logout
     document.getElementById('logoutBtn').addEventListener('click', function() {
         localStorage.removeItem('currentUser');
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     });
     
     // Variables para almacenar archivos seleccionados

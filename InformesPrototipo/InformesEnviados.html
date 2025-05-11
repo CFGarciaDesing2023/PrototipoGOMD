@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes Enviados | Gestión Operador</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .filter-group select, 
+        .filter-group input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+
+        /* Tarjetas de informes */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .report-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-card.completed {
+            border-left-color: var(--success-color);
+        }
+
+        .report-card-header {
+            padding: 1.2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-card-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .report-card-date {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        .report-card-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: #e0e0e0;
+            color: #555;
+        }
+
+        .report-card.completed .report-card-status {
+            background-color: #d4edda;
+            color: var(--success-color);
+        }
+
+        .report-card-body {
+            padding: 1.2rem;
+        }
+
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .report-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .report-meta-item i {
+            color: var(--secondary-color);
+        }
+
+        .report-summary {
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f8ff;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #999;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="logo_mediano.png" alt="Logo de la Empresa" class="logo">
+        <h1>Informes Enviados</h1>
+        <nav>
+            <a href="../InformesPrototipo/operador.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Volver a Gestión
+            </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="plant-filter"><i class="fas fa-industry"></i> Planta</label>
+                <select id="plant-filter">
+                    <option value="">Todas las plantas</option>
+                    <option value="heliconias">EP Heliconias</option>
+                    <option value="orquideas">EP Orquídeas</option>
+                    <option value="girasoles">EP Girasoles</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="status-filter"><i class="fas fa-filter"></i> Estado</label>
+                <select id="status-filter">
+                    <option value="">Todos los estados</option>
+                    <option value="completed">Completados</option>
+                    <option value="pending">Pendientes de revisión</option>
+                    <option value="rejected">Rechazados</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="date-filter"><i class="fas fa-calendar"></i> Periodo</label>
+                <input type="month" id="date-filter">
+            </div>
+        </div>
+
+        <!-- Listado de informes -->
+        <div class="reports-grid" id="reportsContainer">
+            <!-- Ejemplo de tarjeta de informe -->
+            <div class="report-card completed">
+                <div class="report-card-header">
+                    <div>
+                        <div class="report-card-title">
+                            <i class="fas fa-industry"></i> EP Heliconias
+                        </div>
+                        <div class="report-card-date">
+                            01/01/2025 - 15/01/2025
+                        </div>
+                    </div>
+                    <span class="report-card-status">Completado</span>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-meta">
+                        <div class="report-meta-item">
+                            <i class="fas fa-user"></i> Operador: Juan Pérez
+                        </div>
+                        <div class="report-meta-item">
+                            <i class="fas fa-clock"></i> Enviado: 15/01/2025 14:30
+                        </div>
+                    </div>
+                    <div class="report-summary">
+                        Informe quincenal completo con todos los requerimientos: fotos de purga, limpieza, rejillas, cal y parámetros; videos diarios y documentos PDF.
+                    </div>
+                    <div class="report-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Ver Detalles
+                        </button>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-download"></i> Descargar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Más tarjetas de ejemplo -->
+            <!-- ... -->
+
+            <!-- Estado vacío (se muestra cuando no hay informes) -->
+            <!-- <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No hay informes enviados</h3>
+                <p>Aún no has enviado ningún informe. Completa el formulario de gestión para crear tu primer informe.</p>
+                <a href="../InformesPrototipo/operador.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Crear Nuevo Informe
+                </a>
+            </div> -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener datos de localStorage o API
+            const reports = JSON.parse(localStorage.getItem('submittedReports')) || [];
+            
+            // Elementos del DOM
+            const reportsContainer = document.getElementById('reportsContainer');
+            const plantFilter = document.getElementById('plant-filter');
+            const statusFilter = document.getElementById('status-filter');
+            const dateFilter = document.getElementById('date-filter');
+            
+            // Función para renderizar informes
+            function renderReports(filteredReports = reports) {
+                reportsContainer.innerHTML = '';
+                
+                if (filteredReports.length === 0) {
+                    reportsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No hay informes enviados</h3>
+                            <p>Aún no has enviado ningún informe. Completa el formulario de gestión para crear tu primer informe.</p>
+                            <a href="../operario/operario.html" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Volver al Informe
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredReports.forEach(report => {
+                    const reportCard = document.createElement('div');
+                    reportCard.className = `report-card ${report.status === 'completed' ? 'completed' : ''}`;
+                    reportCard.innerHTML = `
+                        <div class="report-card-header">
+                            <div>
+                                <div class="report-card-title">
+                                    <i class="fas fa-industry"></i> ${report.plant}
+                                </div>
+                                <div class="report-card-date">
+                                    ${report.dateRange}
+                                </div>
+                            </div>
+                            <span class="report-card-status">
+                                ${report.status === 'completed' ? 'Completado' : 
+                                  report.status === 'pending' ? 'Pendiente' : 'Rechazado'}
+                            </span>
+                        </div>
+                        <div class="report-card-body">
+                            <div class="report-meta">
+                                <div class="report-meta-item">
+                                    <i class="fas fa-user"></i> Operador: ${report.operator}
+                                </div>
+                                <div class="report-meta-item">
+                                    <i class="fas fa-clock"></i> Enviado: ${report.submittedAt}
+                                </div>
+                            </div>
+                            <div class="report-summary">
+                                ${report.summary || 'Informe quincenal sin descripción adicional.'}
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" data-id="${report.id}">
+                                    <i class="fas fa-eye"></i> Ver Detalles
+                                </button>
+                                <button class="btn btn-outline" data-id="${report.id}">
+                                    <i class="fas fa-download"></i> Descargar PDF
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    reportsContainer.appendChild(reportCard);
+                });
+            }
+            
+            // Función para aplicar filtros
+            function applyFilters() {
+                const plantValue = plantFilter.value;
+                const statusValue = statusFilter.value;
+                const dateValue = dateFilter.value;
+                
+                const filtered = reports.filter(report => {
+                    return (!plantValue || report.plantId === plantValue) &&
+                           (!statusValue || report.status === statusValue) &&
+                           (!dateValue || report.period === dateValue);
+                });
+                
+                renderReports(filtered);
+            }
+            
+            // Event listeners para filtros
+            plantFilter.addEventListener('change', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            dateFilter.addEventListener('change', applyFilters);
+            
+            // Renderizar informes al cargar
+            renderReports();
+            
+            // Ejemplo de cómo guardar un nuevo informe desde la vista de gestión
+            // Esto debería llamarse cuando se complete un informe en operario.html
+            function saveNewReport(reportData) {
+                const reports = JSON.parse(localStorage.getItem('submittedReports')) || [];
+                reports.push(reportData);
+                localStorage.setItem('submittedReports', JSON.stringify(reports));
+                
+                // En una aplicación real, aquí harías una petición a tu API
+                console.log('Nuevo informe guardado:', reportData);
+            }
+            
+            // Ejemplo de datos para un nuevo informe (esto vendría de operario.html)
+            /*
+            const newReport = {
+                id: Date.now(),
+                plant: 'EP Heliconias',
+                plantId: 'heliconias',
+                dateRange: '01/01/2025 - 15/01/2025',
+                period: '2025-01',
+                operator: 'Juan Pérez',
+                submittedAt: new Date().toLocaleString(),
+                status: 'completed',
+                summary: 'Informe quincenal completo con todos los requerimientos...',
+                files: {
+                    photos: 5,
+                    videos: 12,
+                    documents: 3
+                }
+            };
+            saveNewReport(newReport);
+            */
+        });
+    </script>
+</body>
+</html>
