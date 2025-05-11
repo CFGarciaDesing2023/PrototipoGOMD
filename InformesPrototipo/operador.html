@@ -4,13 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operador - Sistema de Informes</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../InformesPrototipo/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Envío de Informes Quincenales</h1>
-        <div class="user-info">
+       <nav class="app-nav" aria-label="Navegación principal">
+                <ul class="nav-menu">
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="#" aria-expanded="false">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Informes</span>
+                            <i class="fas fa-chevron-down submenu-indicator"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="../coordinador/CreateInforme.html"><i class="fas fa-plus-circle"></i> Crear Informe</a></li>
+                            <li><a href="#"><i class="fas fa-inbox"></i> Recibidos</a></li>
+                            <li><a href="#"><i class="fas fa-paper-plane"></i> Enviados</a></li>
+                            <li><a href="#"><i class="fas fa-archive"></i> Archivados</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Sitios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analíticos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-users"></i>
+                            <span>Equipo</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-info">
             <span id="currentUser"></span>
             <button id="logoutBtn">Cerrar Sesión</button>
         </div>
@@ -196,6 +236,6 @@
         </div>
     </main>
 
-    <script src="js/operador.js"></script>
+    <script src="../InformesPrototipo/js/operador.js"></script>
 </body>
 </html>

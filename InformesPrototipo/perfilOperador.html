@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil Operador | Gestión de Registros</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Tarjeta de perfil */
+        .profile-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), #1a252f);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-title {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .edit-profile-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-profile-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: rotate(15deg);
+        }
+
+        /* Sección de información */
+        .profile-body {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .editable-field {
+            display: none;
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Botones */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f8ff;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* Modal de cambio de contraseña */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="logo_mediano.png" alt="Logo de la Empresa" class="logo">
+        <h1>Mi Perfil</h1>
+        <nav>
+            <a href="../InformesPrototipo/operador.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Volver a Gestión
+            </a>
+            
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <button id="editProfileBtn" class="edit-profile-btn">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <img src="https://ui-avatars.com/api/?name=Cristian+Garcia&background=random" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                <h2 class="profile-name" id="profileName">Cristian Garcia</h2>
+                <p class="profile-title">Operador PTAR</p>
+            </div>
+            
+            <div class="profile-body">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i> Información Personal
+                </h3>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-id-card"></i> Identificación
+                        </div>
+                        <div class="info-value" id="idValue">1023456789</div>
+                        <input type="text" class="editable-field" id="idInput" value="1023456789">
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </div>
+                        <div class="info-value" id="emailValue">cristiangarcia96@gomd.com</div>
+                        <input type="email" class="editable-field" id="emailInput" value="cristiangarcia96@gomd.com">
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-phone"></i> Teléfono
+                        </div>
+                        <div class="info-value" id="phoneValue">+57 301 123 4567</div>
+                        <input type="tel" class="editable-field" id="phoneInput" value="+57 301 123 4567">
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-map-marker-alt"></i> Dirección
+                        </div>
+                        <div class="info-value" id="addressValue">Diagonal 2F#4A60 RTE1 Florencia, Caqueta</div>
+                        <input type="text" class="editable-field" id="addressInput" value="Calle 123 #45-67, Bogotá">
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-industry"></i> Planta Asignada
+                        </div>
+                        <div class="info-value" id="plantValue"> PTAR E.P Heliconias</div>
+                        <select class="editable-field" id="plantInput">
+                            <option value="heliconias">EP Heliconias</option>
+                            <option value="orquideas">EP Orquídeas</option>
+                            <option value="girasoles">EP Girasoles</option>
+                        </select>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-calendar-alt"></i> Fecha de Ingreso
+                        </div>
+                        <div class="info-value">15/03/2020</div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title">
+                    <i class="fas fa-chart-line"></i> Estadísticas
+                </h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalReports">47</div>
+                        <div class="stat-label">Informes Enviados</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value" id="completedReports">42</div>
+                        <div class="stat-label">Completados</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value" id="pendingReports">3</div>
+                        <div class="stat-label">Pendientes</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value" id="rejectedReports">2</div>
+                        <div class="stat-label">Rechazados</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons" id="normalButtons">
+                    <button class="btn btn-outline" id="changePasswordBtn">
+                        <i class="fas fa-key"></i> Cambiar Contraseña
+                    </button>
+                </div>
+                
+                <div class="action-buttons" id="editButtons" style="display: none;">
+                    <button class="btn btn-danger" id="cancelEditBtn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-primary" id="saveChangesBtn">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de cambio de contraseña -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h3 class="modal-title">
+                <i class="fas fa-key"></i> Cambiar Contraseña
+            </h3>
+            
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Contraseña Actual</label>
+                    <input type="password" id="currentPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">Nueva Contraseña</label>
+                    <input type="password" id="newPassword" class="form-control" required minlength="8">
+                    <small class="text-muted">Mínimo 8 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-outline" id="cancelPasswordBtn">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Actualizar Contraseña
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const saveChangesBtn = document.getElementById('saveChangesBtn');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const passwordModal = document.getElementById('passwordModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+            const passwordForm = document.getElementById('passwordForm');
+            
+            // Campos editables
+            const editableFields = document.querySelectorAll('.editable-field');
+            const infoValues = document.querySelectorAll('.info-value');
+            
+            // Botones de acción
+            const normalButtons = document.getElementById('normalButtons');
+            const editButtons = document.getElementById('editButtons');
+            
+            // Datos del perfil (en una app real estos vendrían de una API)
+            let profileData = {
+                name: 'Cristian Garcia',
+                id: '1023456789',
+                email: 'cristiangarcia96@gomd.com',
+                phone: '+57 301 123 4567',
+                address: 'Diagonal 2F#4A60 RTE1 Florencia, Caqueta',
+                plant: 'E.P Heliconias',
+                stats: {
+                    totalReports: 47,
+                    completed: 42,
+                    pending: 3,
+                    rejected: 2
+                }
+            };
+            
+            // Cargar datos del perfil
+            function loadProfileData() {
+                document.getElementById('profileName').textContent = profileData.name;
+                document.getElementById('idValue').textContent = profileData.id;
+                document.getElementById('emailValue').textContent = profileData.email;
+                document.getElementById('phoneValue').textContent = profileData.phone;
+                document.getElementById('addressValue').textContent = profileData.address;
+                document.getElementById('plantValue').textContent = getPlantName(profileData.plant);
+                
+                // Cargar valores en los inputs
+                document.getElementById('idInput').value = profileData.id;
+                document.getElementById('emailInput').value = profileData.email;
+                document.getElementById('phoneInput').value = profileData.phone;
+                document.getElementById('addressInput').value = profileData.address;
+                document.getElementById('plantInput').value = profileData.plant;
+                
+                // Estadísticas
+                document.getElementById('totalReports').textContent = profileData.stats.totalReports;
+                document.getElementById('completedReports').textContent = profileData.stats.completed;
+                document.getElementById('pendingReports').textContent = profileData.stats.pending;
+                document.getElementById('rejectedReports').textContent = profileData.stats.rejected;
+            }
+            
+            // Helper para obtener nombre de planta
+            function getPlantName(plantId) {
+                const plants = {
+                    heliconias: 'EP Heliconias',
+                    orquideas: 'EP Orquídeas',
+                    girasoles: 'EP Girasoles'
+                };
+                return plants[plantId] || plantId;
+            }
+            
+            // Modo edición
+            function enableEditMode() {
+                // Mostrar campos de edición
+                editableFields.forEach(field => field.style.display = 'block');
+                infoValues.forEach(value => value.style.display = 'none');
+                
+                // Cambiar botones
+                normalButtons.style.display = 'none';
+                editButtons.style.display = 'flex';
+            }
+            
+            // Cancelar edición
+            function cancelEdit() {
+                // Ocultar campos de edición
+                editableFields.forEach(field => field.style.display = 'none');
+                infoValues.forEach(value => value.style.display = 'block');
+                
+                // Restaurar valores originales
+                loadProfileData();
+                
+                // Cambiar botones
+                normalButtons.style.display = 'flex';
+                editButtons.style.display = 'none';
+            }
+            
+            // Guardar cambios
+            function saveChanges() {
+                // Actualizar objeto profileData
+                profileData = {
+                    ...profileData,
+                    id: document.getElementById('idInput').value,
+                    email: document.getElementById('emailInput').value,
+                    phone: document.getElementById('phoneInput').value,
+                    address: document.getElementById('addressInput').value,
+                    plant: document.getElementById('plantInput').value
+                };
+                
+                // En una aplicación real, aquí harías una petición a tu API
+                console.log('Datos actualizados:', profileData);
+                
+                // Mostrar notificación de éxito
+                alert('¡Tus cambios se han guardado correctamente!');
+                
+                // Recargar datos
+                loadProfileData();
+                cancelEdit();
+            }
+            
+            // Event listeners
+            editProfileBtn.addEventListener('click', enableEditMode);
+            cancelEditBtn.addEventListener('click', cancelEdit);
+            saveChangesBtn.addEventListener('click', saveChanges);
+            
+            changePasswordBtn.addEventListener('click', () => {
+                passwordModal.style.display = 'flex';
+            });
+            
+            closeModal.addEventListener('click', () => {
+                passwordModal.style.display = 'none';
+            });
+            
+            cancelPasswordBtn.addEventListener('click', () => {
+                passwordModal.style.display = 'none';
+            });
+            
+            passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Validaciones
+                if (newPassword !== confirmPassword) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+                
+                if (newPassword.length < 8) {
+                    alert('La contraseña debe tener al menos 8 caracteres');
+                    return;
+                }
+                
+                // En una aplicación real, aquí harías una petición a tu API
+                console.log('Cambiando contraseña:', { currentPassword, newPassword });
+                
+                // Mostrar notificación de éxito
+                alert('¡Tu contraseña se ha actualizado correctamente!');
+                
+                // Limpiar formulario y cerrar modal
+                passwordForm.reset();
+                passwordModal.style.display = 'none';
+            });
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', (e) => {
+                if (e.target === passwordModal) {
+                    passwordModal.style.display = 'none';
+                }
+            });
+            
+            // Cargar datos iniciales
+            loadProfileData();
+        });
+    </script>
+</body>
+</html>
