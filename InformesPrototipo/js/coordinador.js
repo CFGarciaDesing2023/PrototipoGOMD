@@ -1,3 +1,19 @@
+// Función para cargar JSZip dinámicamente
+function loadJSZip() {
+    return new Promise((resolve, reject) => {
+        if (window.JSZip) {
+            resolve(window.JSZip);
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        script.onload = () => resolve(window.JSZip);
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar sesión
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -30,6 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmCancel = document.getElementById('confirmCancel');
     const confirmAction = document.getElementById('confirmAction');
     let currentAction = null;
+    
+    // Variables para control de descarga
+    let originalDownloadBtnText = '';
     
     // Inicializar
     loadInformes();
@@ -67,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Botones del modal
         document.getElementById('markReviewed').addEventListener('click', markAsReviewed);
-        document.getElementById('downloadInforme').addEventListener('click', downloadInforme);
+        document.getElementById('downloadInforme').addEventListener('click', downloadInformeAsZip);
         document.getElementById('deleteInforme').addEventListener('click', () => {
             showConfirmModal(
                 'Eliminar Informe',
@@ -490,42 +509,162 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Función para descargar archivos (simulada)
+    // Función para descargar archivos individuales (simulada)
     function downloadFile(filename, type) {
         // En un sistema real, esto descargaría el archivo del servidor
         alert(`En un sistema real, se descargaría el ${type}: ${filename}`);
     }
     
-    // Función para descargar todo el informe
-    function downloadInforme() {
+    // Función para descargar todo el informe como ZIP
+    async function downloadInformeAsZip() {
         const informe = filteredInformes.find(i => i.id === currentInformeId);
         if (!informe) return;
-        
-        // Crear un objeto con los datos del informe
-        const informeData = {
-            ...informe,
-            // En un sistema real, aquí incluiríamos las URLs para descargar los archivos
-            mensaje: 'En un sistema real, aquí se incluirían los enlaces para descargar los archivos del servidor'
-        };
-        
-        // Crear un blob con los datos
-        const blob = new Blob([JSON.stringify(informeData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        // Crear enlace de descarga
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `informe-${informe.id}.json`;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Limpiar
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-        
-        alert(`Se ha descargado la información del informe #${informe.id}. En un sistema real, se descargarían los archivos asociados.`);
+
+        try {
+            // Mostrar mensaje de preparación
+            const downloadBtn = document.getElementById('downloadInforme');
+            originalDownloadBtnText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando archivos...';
+            downloadBtn.disabled = true;
+
+            // Cargar JSZip dinámicamente
+            const JSZip = await loadJSZip();
+            const zip = new JSZip();
+            
+            // Crear una carpeta para el informe
+            const folder = zip.folder(`informe-${informe.id}`);
+            
+            // Añadir metadatos del informe como archivo JSON
+            const informeData = {
+                id: informe.id,
+                sitio: informe.sitio,
+                tipoSitio: informe.tipoSitio,
+                operador: informe.operador,
+                fecha: informe.fecha,
+                timestamp: informe.timestamp,
+                estado: informe.estado,
+                notas: informe.notas || ''
+            };
+            
+            folder.file('metadata.json', JSON.stringify(informeData, null, 2));
+            
+            // Crear carpetas para cada tipo de archivo
+            const fotosFolder = folder.folder('fotos');
+            const videosFolder = folder.folder('videos');
+            const docsFolder = folder.folder('documentos');
+            
+            // Función para simular la obtención de archivos (en un sistema real, esto haría fetch al servidor)
+            async function getFileContent(fileInfo, type) {
+                // En un sistema real, aquí haríamos fetch al servidor para obtener el archivo
+                // Por ahora simulamos un archivo con el nombre correcto
+                let content, mimeType;
+                
+                switch(type) {
+                    case 'image':
+                        mimeType = 'image/jpeg';
+                        content = `Contenido simulado para imagen ${fileInfo.name}`;
+                        break;
+                    case 'video':
+                        mimeType = 'video/mp4';
+                        content = `Contenido simulado para video ${fileInfo.name}`;
+                        break;
+                    case 'document':
+                        mimeType = 'application/pdf';
+                        content = `Contenido simulado para documento ${fileInfo.name}`;
+                        break;
+                    default:
+                        mimeType = 'application/octet-stream';
+                        content = `Contenido simulado para ${fileInfo.name}`;
+                }
+                
+                return new Blob([content], { type: mimeType });
+            }
+            
+            // Procesar fotos
+            const fotoPromises = informe.fotos.map(async (foto, index) => {
+                try {
+                    const content = await getFileContent(foto, 'image');
+                    fotosFolder.file(foto.name, content);
+                    return { success: true };
+                } catch (error) {
+                    console.error(`Error al procesar foto ${foto.name}:`, error);
+                    return { success: false, name: foto.name };
+                }
+            });
+            
+            // Procesar videos
+            const videoPromises = informe.videos.map(async (video, index) => {
+                try {
+                    const content = await getFileContent(video, 'video');
+                    videosFolder.file(video.name, content);
+                    return { success: true };
+                } catch (error) {
+                    console.error(`Error al procesar video ${video.name}:`, error);
+                    return { success: false, name: video.name };
+                }
+            });
+            
+            // Procesar documentos
+            const docPromises = informe.documentos.map(async (doc, index) => {
+                try {
+                    const content = await getFileContent(doc, 'document');
+                    docsFolder.file(doc.name, content);
+                    return { success: true };
+                } catch (error) {
+                    console.error(`Error al procesar documento ${doc.name}:`, error);
+                    return { success: false, name: doc.name };
+                }
+            });
+            
+            // Esperar a que todos los archivos se procesen
+            const fotoResults = await Promise.all(fotoPromises);
+            const videoResults = await Promise.all(videoPromises);
+            const docResults = await Promise.all(docPromises);
+            
+            // Verificar si hubo errores
+            const failedFiles = [
+                ...fotoResults.filter(r => !r.success),
+                ...videoResults.filter(r => !r.success),
+                ...docResults.filter(r => !r.success)
+            ];
+            
+            // Generar el ZIP
+            const content = await zip.generateAsync({ type: 'blob' });
+            
+            // Descargar el ZIP
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `informe-${informe.id}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpiar
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+            
+            // Mostrar notificación
+            if (failedFiles.length > 0) {
+                alert(`Se descargó el informe, pero ${failedFiles.length} archivos no pudieron incluirse:\n\n${
+                    failedFiles.map(f => f.name).join('\n')
+                }`);
+            } else {
+                alert(`Informe #${informe.id} descargado correctamente como archivo ZIP.`);
+            }
+            
+        } catch (error) {
+            console.error('Error al generar el ZIP:', error);
+            alert('Ocurrió un error al generar el archivo ZIP. Por favor intenta nuevamente.');
+        } finally {
+            // Restaurar el botón de descarga
+            const downloadBtn = document.getElementById('downloadInforme');
+            if (downloadBtn) {
+                downloadBtn.innerHTML = originalDownloadBtnText;
+                downloadBtn.disabled = false;
+            }
+        }
     }
     
     // Función para mostrar modal de confirmación
