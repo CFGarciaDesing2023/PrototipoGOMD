@@ -1,221 +1,254 @@
-// Sistema de Autenticación con LocalStorage
+// Navegación Responsive
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos del DOM
+    const navbarToggle = document.getElementById('navbarToggle');
+    const navbarMenu = document.getElementById('navbarMenu');
+    
+    navbarToggle.addEventListener('click', function() {
+        navbarToggle.classList.toggle('active');
+        navbarMenu.classList.toggle('show');
+    });
+    
+    // Cerrar menú al hacer clic en un enlace
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (navbarMenu.classList.contains('show')) {
+                navbarToggle.classList.remove('active');
+                navbarMenu.classList.remove('show');
+            }
+        });
+    });
+    
+    // Cambiar navbar al hacer scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    // Modal de Acceso
+    const modalAcceso = document.getElementById('modalAcceso');
+    const btnAcceso = document.getElementById('btnAcceso');
+    const modalCerrar = document.getElementById('modalCerrar');
+    const btnCancelar = document.getElementById('btnCancelar');
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
-    const btnIngresar = document.getElementById('btnIngresar');
-    const btnRegistrar = document.getElementById('btnRegistrar');
-    const modalTitle = document.getElementById('modalTitle');
-    const forgotPassword = document.getElementById('forgotPassword');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
     
-    // Cambiar entre pestañas de Login y Registro
-    loginTab.addEventListener('click', function(e) {
+    // Abrir modal
+    btnAcceso.addEventListener('click', function(e) {
         e.preventDefault();
-        switchAuthTab('login');
+        modalAcceso.classList.add('show');
+        document.body.style.overflow = 'hidden';
     });
     
-    registerTab.addEventListener('click', function(e) {
-        e.preventDefault();
-        switchAuthTab('register');
+    // Cerrar modal
+    function cerrarModal() {
+        modalAcceso.classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+    
+    modalCerrar.addEventListener('click', cerrarModal);
+    btnCancelar.addEventListener('click', cerrarModal);
+    
+    // Cerrar al hacer clic fuera del modal
+    modalAcceso.addEventListener('click', function(e) {
+        if (e.target === modalAcceso) {
+            cerrarModal();
+        }
     });
     
-    // Función para cambiar entre pestañas
-    function switchAuthTab(tab) {
-        if (tab === 'login') {
-            loginTab.classList.add('active');
-            registerTab.classList.remove('active');
-            loginForm.classList.add('active');
-            registerForm.classList.remove('active');
-            btnIngresar.style.display = 'block';
-            btnRegistrar.style.display = 'none';
-            modalTitle.textContent = 'Iniciar Sesión';
-        } else {
-            loginTab.classList.remove('active');
-            registerTab.classList.add('active');
-            loginForm.classList.remove('active');
-            registerForm.classList.add('active');
-            btnIngresar.style.display = 'none';
-            btnRegistrar.style.display = 'block';
-            modalTitle.textContent = 'Registrarse';
-        }
-        
-        // Limpiar mensajes de error
-        clearAuthMessages();
-    }
+    // Cambiar entre pestañas de login y registro
+    loginTab.addEventListener('click', function() {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        btnLogin.style.display = 'block';
+        btnRegister.style.display = 'none';
+        document.getElementById('modalTitle').textContent = 'Acceder';
+    });
     
-    // Limpiar mensajes de error
-    function clearAuthMessages() {
-        const existingMessages = document.querySelectorAll('.auth-message');
-        existingMessages.forEach(msg => msg.remove());
-    }
+    registerTab.addEventListener('click', function() {
+        registerTab.classList.add('active');
+        loginTab.classList.remove('active');
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        btnLogin.style.display = 'none';
+        btnRegister.style.display = 'block';
+        document.getElementById('modalTitle').textContent = 'Registrarse';
+    });
     
-    // Mostrar mensaje de error/éxito
-    function showAuthMessage(type, message, form) {
-        clearAuthMessages();
-        
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `auth-message ${type}-message`;
-        messageDiv.textContent = message;
-        
-        form.insertBefore(messageDiv, form.firstChild);
-    }
+   
     
-    // Validar email
-    function isValidEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(String(email).toLowerCase());
-    }
-    
-    // Guardar usuario en localStorage
-    function saveUser(user) {
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        
-        // Verificar si el usuario ya existe
-        const userExists = users.some(u => u.email === user.email);
-        if (userExists) {
-            return false;
-        }
-        
-        users.push(user);
-        localStorage.setItem('users', JSON.stringify(users));
-        return true;
-    }
-    
-    // Autenticar usuario
-    function authenticateUser(email, password) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        return user || null;
-    }
-    
-    // Manejar registro de usuario
-    btnRegistrar.addEventListener('click', function(e) {
+    btnRegister.addEventListener('click', function(e) {
         e.preventDefault();
-        
-        const name = document.getElementById('registerName').value.trim();
-        const email = document.getElementById('registerEmail').value.trim();
+        const username = document.getElementById('registerUsername').value;
         const password = document.getElementById('registerPassword').value;
-        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+        const role = document.getElementById('registerRole').value;
         
-        // Validaciones
-        if (!name || !email || !password || !confirmPassword) {
-            showAuthMessage('error', 'Todos los campos son obligatorios.', registerForm);
+        if (!username || !password || !role) {
+            showNotification('Por favor complete todos los campos', 'error');
             return;
         }
         
-        if (!isValidEmail(email)) {
-            showAuthMessage('error', 'Por favor ingresa un correo electrónico válido.', registerForm);
+        if (username.length < 4 || password.length < 4) {
+            showNotification('Usuario y contraseña deben tener al menos 4 caracteres', 'error');
             return;
         }
         
-        if (password.length < 6) {
-            showAuthMessage('error', 'La contraseña debe tener al menos 6 caracteres.', registerForm);
-            return;
-        }
-        
-        if (password !== confirmPassword) {
-            showAuthMessage('error', 'Las contraseñas no coinciden.', registerForm);
-            return;
-        }
-        
-        // Crear usuario
-        const user = {
-            name,
-            email,
-            password, // Nota: En una aplicación real, NUNCA guardes contraseñas en texto plano
-            createdAt: new Date().toISOString()
-        };
-        
-        // Guardar usuario
-        if (saveUser(user)) {
-            showAuthMessage('success', '¡Registro exitoso! Ahora puedes iniciar sesión.', registerForm);
-            
-            // Limpiar formulario
-            registerForm.reset();
-            
-            // Cambiar a pestaña de login
-            setTimeout(() => switchAuthTab('login'), 1500);
-        } else {
-            showAuthMessage('error', 'Este correo electrónico ya está registrado.', registerForm);
-        }
+        // Simulación de registro
+        showNotification('Registro exitoso. Ahora puede iniciar sesión', 'success');
+        setTimeout(() => {
+            loginTab.click();
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            document.getElementById('role').value = role;
+        }, 1500);
     });
     
-    // Manejar inicio de sesión
-    btnIngresar.addEventListener('click', function(e) {
-        e.preventDefault();
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = 'notification';
+        notification.classList.add(type);
         
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value;
-        
-        // Validaciones
-        if (!email || !password) {
-            showAuthMessage('error', 'Todos los campos son obligatorios.', loginForm);
-            return;
-        }
-        
-        if (!isValidEmail(email)) {
-            showAuthMessage('error', 'Por favor ingresa un correo electrónico válido.', loginForm);
-            return;
-        }
-        
-        // Autenticar usuario
-        const user = authenticateUser(email, password);
-        
-        if (user) {
-            // Guardar sesión (en un caso real usaríamos tokens JWT)
-            sessionStorage.setItem('currentUser', JSON.stringify({
-                name: user.name,
-                email: user.email,
-                loggedIn: true,
-                lastLogin: new Date().toISOString()
-            }));
-            
-            showAuthMessage('success', `¡Bienvenido, ${user.name}!`, loginForm);
-            
-            // Cerrar modal después de 1.5 segundos
-            setTimeout(() => {
-                modalAcceso.classList.remove('show');
-                document.body.style.overflow = 'auto';
-                
-                // Actualizar UI para usuario logueado
-                updateUIAfterLogin(user.name);
-            }, 1500);
-        } else {
-            showAuthMessage('error', 'Correo electrónico o contraseña incorrectos.', loginForm);
-        }
-    });
-    
-    // Olvidé mi contraseña (simulado)
-    forgotPassword.addEventListener('click', function(e) {
-        e.preventDefault();
-        showAuthMessage('error', 'Por favor contacta al administrador para restablecer tu contraseña.', loginForm);
-    });
-    
-    // Actualizar UI después del login
-    function updateUIAfterLogin(userName) {
-        const btnAcceso = document.getElementById('btnAcceso');
-        
-        // Cambiar el botón de Acceder por el nombre del usuario
-        btnAcceso.textContent = userName;
-        btnAcceso.classList.add('user-logged-in');
-        btnAcceso.href = '#';
-        btnAcceso.style.pointerEvents = 'none';
-        
-        // Aquí podrías añadir un menú desplegable con opciones de usuario
+        setTimeout(() => {
+            notification.classList.remove(type);
+            notification.textContent = '';
+        }, 5000);
     }
     
-    // Verificar si hay una sesión activa al cargar la página
-    function checkLoggedInUser() {
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    // Carrusel
+    const carousel = document.getElementById('mainCarousel');
+    const carouselInner = document.querySelector('.carousel-inner');
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    let currentIndex = 0;
+    const itemCount = carouselItems.length;
+    
+    function updateCarousel() {
+        carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
         
-        if (currentUser && currentUser.loggedIn) {
-            updateUIAfterLogin(currentUser.name);
-        }
+        // Actualizar indicadores
+        indicators.forEach((indicator, index) => {
+            if (index === currentIndex) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
     }
     
-    // Inicializar verificación de sesión
-    checkLoggedInUser();
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % itemCount;
+        updateCarousel();
+    }
+    
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + itemCount) % itemCount;
+        updateCarousel();
+    }
+    
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    
+    // Navegación por indicadores
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentIndex = index;
+            updateCarousel();
+        });
+    });
+    
+    // Autoavance del carrusel
+    let carouselInterval = setInterval(nextSlide, 5000);
+    
+    carousel.addEventListener('mouseenter', () => {
+        clearInterval(carouselInterval);
+    });
+    
+    carousel.addEventListener('mouseleave', () => {
+        carouselInterval = setInterval(nextSlide, 5000);
+    });
+    
+    // Cargar proyectos dinámicamente
+    const proyectosContainer = document.getElementById('proyectosContainer');
+    
+    const proyectos = [
+        {
+            titulo: 'PTAR San José del Guaviare',
+            descripcion: 'Operación y mantenimiento de la planta de tratamiento de aguas residuales del municipio.',
+            imagen: '../InformesPrototipo/img/IMG_20250425_111403.jpg',
+            fecha: 'Enero 2024 - Actualidad'
+        },
+        {
+            titulo: 'PTAP El Retorno',
+            descripcion: 'Implementación de sistema de potabilización para comunidad rural en El Retorno.',
+            imagen: '../InformesPrototipo/img/IMG_20250502_220217.jpg',
+            fecha: 'Septiembre 2023 - Diciembre 2023'
+        },
+        {
+            titulo: 'Mantenimiento Preventivo PTAR',
+            descripcion: 'Programa de mantenimiento preventivo para equipos mecánicos en plantas de tratamiento.',
+            imagen: '../InformesPrototipo/img/IMG_20250502_174838.jpg',
+            fecha: 'Marzo 2023 - Junio 2023'
+        }
+    ];
+    
+    function cargarProyectos() {
+        proyectosContainer.innerHTML = '';
+        
+        proyectos.forEach(proyecto => {
+            const proyectoHTML = `
+                <div class="proyecto-card">
+                    <img src="${proyecto.imagen}" alt="${proyecto.titulo}" class="proyecto-img">
+                    <div class="proyecto-info">
+                        <h3>${proyecto.titulo}</h3>
+                        <p>${proyecto.descripcion}</p>
+                        <div class="proyecto-meta">
+                            <span>${proyecto.fecha}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            proyectosContainer.insertAdjacentHTML('beforeend', proyectoHTML);
+        });
+    }
+    
+    cargarProyectos();
+    
+    // Efecto de scroll suave para enlaces internos
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Mostrar año actual en el footer
+    const yearSpan = document.getElementById('currentYear');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
 });

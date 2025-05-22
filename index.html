@@ -3,39 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Informes Quincenales - Login</title>
-    <link rel="stylesheet" href="../InformesPrototipo/css/login.css">
+    <title>Grupo De Operación Y Mantenimiento De Infraestructura Ambiental</title>
+    <link rel="stylesheet" href="../InformesPrototipo/css/paginaWeb.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="icon" href="img/favicon.png">
 </head>
-<body>
-    <div class="login-container">
-        <div class="logo-container">
-                    <img src="../logo_mediano.png" alt="GeoReport Logo" class="logo">
-                    <h1>G.O.M.D <span class="version">v1.0</span></h1>
-                </div>
-        <h1>Sistema de Informes Quincenales</h1>
-        <div class="login-form">
-            <h2>Iniciar Sesión</h2>
-            <form id="loginForm">
+<body class="textura">
+    <nav class="navbar">
+    <div class="container navbar-container">
+  <div class="logo-text-container">
+    <a href="./" class="navbar-brand">
+      <img src="../InformesPrototipo/img/GOMD.png" alt="GOMD" height="60">
+    </a>
+    <span id="company-name">GRUPO DE OPERACION Y MANTENIMIENTO <br>
+        DE INFRAESTRUCTURA AMBIENTAL SAS ZOMAC</span>
+  </div>
+        <button class="navbar-toggle" id="navbarToggle" aria-label="Menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="navbar-nav" id="navbarMenu">
+            <li class="nav-item active"><a href="./" class="nav-link">Inicio</a></li>
+            <li><a href="#" id="abrirModalEmpresa">Quienes Somos</a></li>
+            <li class="nav-item"><a href="servicios" class="nav-link">Servicios</a></li>
+            <li><a href="#" id="abrirModalContacto">Contacto</a></li>
+            <li class="nav-item"><a href="#" class="nav-link btn-acceso" id="btnAcceso">Acceder</a></li>
+        </ul>
+    </div>
+</nav>
+
+   <!-- Modal de Acceso -->
+<div class="modal" id="modalAcceso">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Acceder</h3>
+            <button class="modal-close" id="modalCerrar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Notificación (éxito/error) -->
+            <div id="notification" class="notification hidden"></div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab">Iniciar Sesión</button>
+                <button class="auth-tab" id="registerTab">Registrarse</button>
+            </div>
+            
+            <!-- Formulario de Login -->
+            <form id="loginForm" class="auth-form active">
                 <div class="form-group">
-                    <label for="username">Usuario:</label>
-                    <input type="text" id="username" required>
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Ej: operador1" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" required>
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="****" required>
                 </div>
                 <div class="form-group">
-                    <label for="role">Rol:</label>
+                    <label for="role">Rol</label>
                     <select id="role" required>
                         <option value="">Seleccione un rol</option>
                         <option value="operador">Operador</option>
                         <option value="coordinador">Coordinador</option>
                     </select>
                 </div>
-                <button type="submit">Ingresar</button>
+                <div class="form-options">
+                    <a href="#" id="forgotPassword">¿Olvidaste tu contraseña?</a>
+                </div>
+            </form>
+            
+            <!-- Formulario de Registro -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerUsername">Usuario*</label>
+                    <input type="text" id="registerUsername" placeholder="Mín. 4 caracteres" required minlength="4">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Contraseña*</label>
+                    <input type="password" id="registerPassword" placeholder="Mín. 4 caracteres" required minlength="4">
+                </div>
+                <div class="form-group">
+                    <label for="registerRole">Rol*</label>
+                    <select id="registerRole" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="operador">Operador</option>
+                        <option value="coordinador">Coordinador</option>
+                    </select>
+                </div>
             </form>
         </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="btnLogin">Ingresar</button>
+            <button class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+            <button class="btn btn-success" id="btnRegister" style="display: none;">Registrarse</button>
+        </div>
     </div>
-    <script src="/InformesPrototipo/js/auth.js"></script>
+</div>
+<!-- Botón en el menú -->
+
+
+<!-- Modal Informativo -->
+<div id="modalEmpresa" class="modal">
+  <div class="modal-content">
+    <span class="cerrar-modal" id="cerrarModalEmpresa">&times;</span>
+    <h2>Sobre Nosotros</h2>
+
+    <section>
+      <h3>Nuestra Historia</h3>
+      <p>
+        Año 2003, año en que las autoridades ambientales y entidades públicas continuaron con las políticas de conservación y protección de cuencas...
+        <br><br>
+        ...fue entonces cuando se inició la primera operación y mantenimiento de la primer planta que se construyó en el Comando Aéreo de Combate número 2, Apiay - Villavicencio, de aguas residuales de lodos activados, con una capacidad de 6 litros por segundo. Poco a poco se fueron extendiendo los servicios inclusive a las plantas de potabilización y al mantenimiento y operación de centros de entrenamiento acuático y oficinas.
+      </p>
+    </section>
+
+    <section>
+      <h3>¿Quiénes Somos?</h3>
+      <p>
+        GOMD, además de ser las iniciales del ingeniero fundador Guido Omar Maya Durango, significa que somos un grupo de operación y mantenimiento de la infraestructura de saneamiento básico...
+        <br><br>
+        ...todo este ciclo es soportado por las iniciales de nuestro nombre. Finalmente, la tubería en nuestro logo representa esa infraestructura para generar esos medios y ese proceso cíclico.
+      </p>
+    </section>
+
+    <section>
+      <h3>¡Somos una empresa con propósito!</h3>
+      <p>Actualmente estamos operando cerca de diez plantas entre PTAR y PTAP a lo largo y ancho de toda la geografía colombiana.</p>
+    </section>
+
+    <section>
+      <h3>Nuestra Misión</h3>
+      <p>Garantizar la calidad, cobertura y continuidad de los servicios ofrecidos, mediante una gestión adecuada e integral de los desafíos enfrentados.</p>
+    </section>
+
+    <section>
+      <h3>Nuestra Visión</h3>
+      <p>Para el 2030 GOMD será líder en la gestión integral de aguas residuales y potabilización de agua, reconocidos a nivel nacional y con un grupo de colaboradores con amplia experiencia y liderazgo en el sector.</p>
+    </section>
+
+    <section>
+      <h3>Nuestro Grupo de Trabajo</h3>
+      <p>Un equipo comprometido con el bienestar ambiental, la innovación y la eficiencia operativa en todo el territorio colombiano.</p>
+    </section>
+  </div>
+</div>
+
+</div>
+
+    <!-- Carrusel con imágenes temáticas -->
+    <header class="carousel-container">
+        <div class="carousel" id="mainCarousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background-image: url('/InformesPrototipo/img/IMG_20250502_220217.jpg')">
+                    <div class="carousel-caption">
+                        <h3>GRUPO GOMD</h3>
+                        <p>"Transformamos el agua para mejorar tu mundo"</p>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('/InformesPrototipo/img/ptap.jpg')">
+                    <div class="carousel-caption">
+                        <h3>OPERACION Y MANTENIMIENTO PTAR - PTAP</h3>
+                        <p>Expertos en tratamiento de aguas residuales y potabilización</p>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('/InformesPrototipo/img/IMG_20250502_174838.jpg')">
+                    <div class="carousel-caption">
+                        <h3>MANTENIMIENTO ESPECIALIZADO</h3>
+                        <p>Servicios profesionales para infraestructura ambiental</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control prev" id="carouselPrev">&#10094;</button>
+            <button class="carousel-control next" id="carouselNext">&#10095;</button>
+            <div class="carousel-indicators">
+                <span class="indicator active" data-slide-to="0"></span>
+                <span class="indicator" data-slide-to="1"></span>
+                <span class="indicator" data-slide-to="2"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container">
+        <!-- Sección Quiénes Somos -->
+        <section class="section-quienes">
+            <h1 class="section-title">Quiénes somos</h1>
+            
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <img src="../InformesPrototipo/img/proposito.jpg" alt="Empresa con propósito" class="card-header-img">
+                        <h4>Somos una empresa con propósitos</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>GOMD, además de ser las iniciales del ingeniero fundador Guido Omar Maya Durango, significa que somos un grupo de operación y mantenimiento dedicado a la excelencia en el tratamiento de aguas.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#modalEmpresa" class="btn btn-primary">Ver más</a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <img src="../InformesPrototipo/img/IMG_20250425_111403.jpg" alt="Nuestra misión" class="card-header-img">
+                        <h4>Nuestra misión</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Garantizar la calidad, cobertura y continuidad de los servicios ofrecidos, mediante una gestión adecuada e integral de los desafíos enfrentados en el tratamiento de aguas.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#abrirModalEmpresa"  class="btn btn-primary">Ver más</a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <img src="../InformesPrototipo/img/Captura de pantalla 2025-05-19 222037.png" alt="Nuestra visión" class="card-header-img">
+                        <h4>Nuestra Visión</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Para el 2030 GOMD será líder en la gestión integral de aguas residuales y potabilización de agua, reconocidos a nivel nacional por nuestra innovación y compromiso ambiental.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#modalEmpresa" class="btn btn-primary">Ver más</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Proyectos -->
+        <section class="section-proyectos">
+            <h2 class="section-title">Últimos proyectos</h2>
+            <div class="proyectos-container" id="proyectosContainer">
+                <!-- Proyectos se cargarán con JS -->
+            </div>
+        </section>
+
+        <!-- Sección Galería -->
+        <section class="section-galeria">
+            <h2 class="section-title">Nuestro Trabajo</h2>
+            <div class="galeria-container">
+                <div class="galeria-item">
+                    <img src="../InformesPrototipo/img/Captura de pantalla 2025-05-19 221746.png" alt="Proceso de tratamiento">
+                    <div class="galeria-overlay">
+                        <p>Proceso de tratamiento de aguas</p>
+                    </div>
+                </div>
+                <div class="galeria-item">
+                    <img src="../InformesPrototipo/img/Captura de pantalla 2025-05-19 222037.png" alt="Equipo de trabajo">
+                    <div class="galeria-overlay">
+                        <p>Nuestro equipo especializado</p>
+                    </div>
+                </div>
+                <div class="galeria-item">
+                    <img src="../InformesPrototipo/img/plan+de+manejo+ambiental+en+proyectos.jpg" alt="Planta en operación">
+                    <div class="galeria-overlay">
+                        <p>Planta en plena operación</p>
+                    </div>
+                </div>
+                <div class="galeria-item">
+                    <img src="../InformesPrototipo/img/whatsapp_image_2024-06-05_at_4.02.41_pm.jpeg" alt="Control de calidad">
+                    <div class="galeria-overlay">
+                        <p>Análisis y control de calidad</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- section-contacto -->
+<!-- Modal de contacto -->
+<div id="modalContacto" class="modal">
+  <div class="modal-content">
+    <span class="cerrar-modal" id="cerrarModalContacto">&times;</span>
+    <h2>Contáctanos</h2>
+    <form id="formularioContacto">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required>
+
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="mensaje">Mensaje:</label>
+      <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Columna Logo -->
+                <div class="footer-col">
+                    <img class="footer-logo" src="../logo_mediano.png" alt="GOMD">
+                    <p class="footer-slogan">"Transformamos el agua, para mejorar tu mundo"</p>
+                </div>
+
+                <!-- Columna Enlaces -->
+                <div class="footer-col">
+                    <h5 class="footer-title">Acerca de nosotros</h5>
+                    <ul class="footer-links">
+                        <li><a href="./">Inicio</a></li>
+                        <li><a href="servicios">Servicios</a></li>
+                        <li><a href="nosotros">Nosotros</a></li>
+                        <li><a href="contactenos">Contáctanos</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna Contacto -->
+                <div class="footer-col">
+                    <h5 class="footer-title">Contáctenos</h5>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="icon">📍</i>
+                           GUAVIARE- SAN JOSE DEL GUAVIARE<br>
+                            VRD BOCAS DE AGUABONITA FINCA SAN ANTONIO
+                            
+                        </li>
+                        <li><i class="icon">✉️</i>gomdsaszomac742@gmail.com</li>
+                        <li><i class="icon">📱</i> +57 3 1 0 2 4 0 9 7 2 2</li>
+                    </ul>
+                </div>
+
+                <!-- Columna Certificaciones -->
+                <div class="footer-col">
+                    <h5 class="footer-title">Certificaciones</h5>
+                    <div class="certificaciones">
+                        <img src="img/certificaciones/iso-14001.png" alt="ISO 14001" class="certificacion-img">
+                        <img src="img/certificaciones/certificado-ambiental.png" alt="Certificado Ambiental" class="certificacion-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-separator"></div>
+
+            <div class="footer-bottom">
+                <p class="copyright">Derechos de autor © G.O.M.D. GRUPO DE OPERACION Y MANTENIMIENTO DE INFRAESTRUCTURA AMBIENTAL SAS ZOMAC 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../InformesPrototipo/js/index.js"></script>
+    <script src="../InformesPrototipo/js/main.js"></script>
+    <script src="../InformesPrototipo/js/auth.js"></script>
 </body>
 </html>
