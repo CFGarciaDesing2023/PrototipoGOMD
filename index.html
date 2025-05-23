@@ -73,24 +73,69 @@
             </form>
             
             <!-- Formulario de Registro -->
-            <form id="registerForm" class="auth-form">
-                <div class="form-group">
-                    <label for="registerUsername">Usuario*</label>
-                    <input type="text" id="registerUsername" placeholder="Mín. 4 caracteres" required minlength="4">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Contraseña*</label>
-                    <input type="password" id="registerPassword" placeholder="Mín. 4 caracteres" required minlength="4">
-                </div>
-                <div class="form-group">
-                    <label for="registerRole">Rol*</label>
-                    <select id="registerRole" required>
-                        <option value="">Seleccione un rol</option>
-                        <option value="operador">Operador</option>
-                        <option value="coordinador">Coordinador</option>
-                    </select>
-                </div>
-            </form>
+            <!-- Formulario de Registro -->
+<form id="registerForm" class="auth-form">
+    <div class="form-group">
+        <label for="registerUsername">Usuario*</label>
+        <input type="text" id="registerUsername" placeholder="Mín. 4 caracteres" required minlength="4">
+    </div>
+    <div class="form-group">
+        <label for="registerPassword">Contraseña*</label>
+        <input type="password" id="registerPassword" placeholder="Mín. 4 caracteres" required minlength="4">
+    </div>
+    <div class="form-group">
+        <label for="registerRole">Rol*</label>
+        <select id="registerRole" required>
+            <option value="">Seleccione un rol</option>
+            <option value="operador">Operador</option>
+            <option value="coordinador">Coordinador</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="registerDepartamento">Departamento*</label>
+        <select id="registerDepartamento" required>
+            <option value="">Seleccione un departamento</option>
+            <option value="Antioquia">Antioquia</option>
+            <option value="Caldas">Caldas</option>
+            <option value="Nariño">Nariño</option>
+            <option value="Tolima">Tolima</option>
+            <option value="Valle del Cauca">Valle del Cauca</option>
+            <!-- Agrega más departamentos según necesidad -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="registerCiudad">Ciudad*</label>
+        <select id="registerCiudad" required>
+            <option value="">Primero seleccione un departamento</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="registerBase">Base/Operación*</label>
+        <select id="registerBase" required>
+            <option value="">Seleccione una base/operación</option>
+            <option value="Erones">Erones: EPMSC Apartador</option>
+            <option value="CPAMS">CPAMS: DORADA</option>
+            <option value="CPMS IPIALES">CPMS IPIALES</option>
+            <option value="E.P Heliconias">E.P Heliconias</option>
+            <option value="EPMSC:Leticia">EPMSC:Leticia</option>
+            <option value="GAORI">GAORI</option>
+            <option value="GACAS">GACAS</option>
+            <option value="GAMAA">GAMAA</option>
+            <option value="GACAR">GACAR</option>
+            <option value="CACOM2">CACOM2</option>
+            <option value="CACOM3">CACOM3</option>
+            <option value="CACOM4">CACOM4</option>
+            <option value="CACOM5">CACOM5</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Tipo de Sitio*</label>
+        <div id="sitiosContainer">
+            <!-- Los checkboxes se generarán dinámicamente según la base seleccionada -->
+            <p>Primero seleccione una base/operación</p>
+        </div>
+    </div>
+</form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" id="btnLogin">Ingresar</button>

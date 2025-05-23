@@ -87,31 +87,129 @@ document.addEventListener('DOMContentLoaded', function() {
     
    
     
-    btnRegister.addEventListener('click', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('registerUsername').value;
-        const password = document.getElementById('registerPassword').value;
-        const role = document.getElementById('registerRole').value;
-        
-        if (!username || !password || !role) {
-            showNotification('Por favor complete todos los campos', 'error');
-            return;
-        }
-        
-        if (username.length < 4 || password.length < 4) {
-            showNotification('Usuario y contraseña deben tener al menos 4 caracteres', 'error');
-            return;
-        }
-        
-        // Simulación de registro
-        showNotification('Registro exitoso. Ahora puede iniciar sesión', 'success');
-        setTimeout(() => {
-            loginTab.click();
-            document.getElementById('username').value = username;
-            document.getElementById('password').value = password;
-            document.getElementById('role').value = role;
-        }, 1500);
+    // Objeto con los sitios disponibles por base
+const sitiosPorBase = {
+    "Erones": ["PTAR", "PTAP"],
+    "CPAMS": ["PTAR"],
+    "CPMS IPIALES": ["PTAR", "PTAP"],
+    "E.P Heliconias": ["PTAR"],
+    "EPMSC:Leticia": ["PTAP"],
+    "GAORI": ["PTAR", "CEA", "MANTENIMIENTO"],
+    "GACAS": ["PTAR", "PTAP", "CEA", "MANTENIMIENTO"],
+    "GAMAA": ["PTAR", "CEA", "MANTENIMIENTO"],
+    "GACAR": ["MANTENIMIENTO"],
+    "CACOM2": ["PTAR", "PTAP", "CEA", "MANTENIMIENTO"],
+    "CACOM3": ["PTAR", "CEA", "MANTENIMIENTO"],
+    "CACOM4": ["FLANDES", "MELGAR", "CERRO MARIA", "MANTENIMIENTO"],
+    "CACOM5": ["PTAR", "MANTENIMIENTO"]
+};
+
+// Mapeo de departamentos a ciudades
+const ciudadesPorDepartamento = {
+    "Antioquia": ["Apartadó", "Heliconias", "Leticia", "Otras..."],
+    "Caldas": ["Dorada", "Otras..."],
+    "Nariño": ["Ipiales", "Otras..."],
+    "Tolima": ["Flandes", "Melgar", "Otras..."],
+    "Valle del Cauca": ["Cerro María", "Otras..."]
+    // Agrega más según necesidad
+};
+
+// Evento para cargar ciudades cuando se selecciona departamento
+document.getElementById('registerDepartamento').addEventListener('change', function() {
+    const departamento = this.value;
+    const ciudadSelect = document.getElementById('registerCiudad');
+    
+    ciudadSelect.innerHTML = '<option value="">Seleccione una ciudad</option>';
+    
+    if (departamento && ciudadesPorDepartamento[departamento]) {
+        ciudadesPorDepartamento[departamento].forEach(ciudad => {
+            const option = document.createElement('option');
+            option.value = ciudad;
+            option.textContent = ciudad;
+            ciudadSelect.appendChild(option);
+        });
+    }
+});
+
+// Evento para cargar sitios cuando se selecciona base
+document.getElementById('registerBase').addEventListener('change', function() {
+    const base = this.value;
+    const sitiosContainer = document.getElementById('sitiosContainer');
+    
+    sitiosContainer.innerHTML = '';
+    
+    if (base && sitiosPorBase[base]) {
+        sitiosPorBase[base].forEach(sitio => {
+            const div = document.createElement('div');
+            div.className = 'checkbox-group';
+            
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = `sitio_${sitio}`;
+            input.name = 'sitios';
+            input.value = sitio;
+            
+            const label = document.createElement('label');
+            label.htmlFor = `sitio_${sitio}`;
+            label.textContent = sitio;
+            
+            div.appendChild(input);
+            div.appendChild(label);
+            sitiosContainer.appendChild(div);
+        });
+    } else {
+        sitiosContainer.innerHTML = '<p>Primero seleccione una base/operación</p>';
+    }
+});
+
+// Modificación de la función de registro para incluir los nuevos campos
+btnRegister.addEventListener('click', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
+    const role = document.getElementById('registerRole').value;
+    const departamento = document.getElementById('registerDepartamento').value;
+    const ciudad = document.getElementById('registerCiudad').value;
+    const base = document.getElementById('registerBase').value;
+    
+    // Obtener sitios seleccionados
+    const sitiosSeleccionados = [];
+    document.querySelectorAll('input[name="sitios"]:checked').forEach(checkbox => {
+        sitiosSeleccionados.push(checkbox.value);
     });
+    
+    // Validaciones
+    if (!username || !password || !role || !departamento || !ciudad || !base || sitiosSeleccionados.length === 0) {
+        showNotification('Por favor complete todos los campos', 'error');
+        return;
+    }
+    
+    if (username.length < 4 || password.length < 4) {
+        showNotification('Usuario y contraseña deben tener al menos 4 caracteres', 'error');
+        return;
+    }
+    
+    // Simulación de registro con los nuevos datos
+    const registro = {
+        username,
+        password,
+        role,
+        departamento,
+        ciudad,
+        base,
+        sitios: sitiosSeleccionados
+    };
+    
+    console.log('Registro completo:', registro);
+    showNotification('Registro exitoso. Ahora puede iniciar sesión', 'success');
+    
+    setTimeout(() => {
+        loginTab.click();
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+        document.getElementById('role').value = role;
+    }, 1500);
+});
     
     function showNotification(message, type) {
         const notification = document.getElementById('notification');
